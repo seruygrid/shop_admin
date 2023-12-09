@@ -19,57 +19,57 @@ import { useRouter } from 'next/router';
 export default function Dashboard() {
   const { t } = useTranslation();
   const { locale } = useRouter();
-  const { data, isLoading: loading } = useAnalyticsQuery();
-  const { price: total_revenue } = usePrice(
-    data && {
-      amount: data?.totalRevenue!,
-    }
-  );
-  const { price: todays_revenue } = usePrice(
-    data && {
-      amount: data?.todaysRevenue!,
-    }
-  );
-  const {
-    error: orderError,
-    orders: orderData,
-    loading: orderLoading,
-    paginatorInfo,
-  } = useOrdersQuery({
-    language: locale,
-    limit: 10,
-    page: 1,
-  });
-  const {
-    data: popularProductData,
-    isLoading: popularProductLoading,
-    error: popularProductError,
-  } = usePopularProductsQuery({ limit: 10, language: locale });
+  // const { data, isLoading: loading } = useAnalyticsQuery();
+  // const { price: total_revenue } = usePrice(
+  //   data && {
+  //     amount: data?.totalRevenue!,
+  //   }
+  // );
+  // const { price: todays_revenue } = usePrice(
+  //   data && {
+  //     amount: data?.todaysRevenue!,
+  //   }
+  // );
+  // const {
+  //   error: orderError,
+  //   orders: orderData,
+  //   loading: orderLoading,
+  //   paginatorInfo,
+  // } = useOrdersQuery({
+  //   language: locale,
+  //   limit: 10,
+  //   page: 1,
+  // });
+  // const {
+  //   data: popularProductData,
+  //   isLoading: popularProductLoading,
+  //   error: popularProductError,
+  // } = usePopularProductsQuery({ limit: 10, language: locale });
+  // 
+  // const { withdraws, loading: withdrawLoading } = useWithdrawsQuery({
+  //   limit: 10,
+  // });
 
-  const { withdraws, loading: withdrawLoading } = useWithdrawsQuery({
-    limit: 10,
-  });
-
-  if (loading || orderLoading || popularProductLoading || withdrawLoading) {
-    return <Loader text={t('common:text-loading')} />;
-  }
-  if (orderError || popularProductError) {
-    return (
-      <ErrorMessage
-        message={orderError?.message || popularProductError?.message}
-      />
-    );
-  }
-  let salesByYear: number[] = Array.from({ length: 12 }, (_) => 0);
-  if (!!data?.totalYearSaleByMonth?.length) {
-    salesByYear = data.totalYearSaleByMonth.map((item: any) =>
-      item.total.toFixed(2)
-    );
-  }
+  // if (loading || orderLoading || popularProductLoading || withdrawLoading) {
+  //   return <Loader text={t('common:text-loading')} />;
+  // }
+  // if (orderError || popularProductError) {
+  //   return (
+  //     <ErrorMessage
+  //       message={orderError?.message || popularProductError?.message}
+  //     />
+  //   );
+  // }
+  // let salesByYear: number[] = Array.from({ length: 12 }, (_) => 0);
+  // if (!!data?.totalYearSaleByMonth?.length) {
+  //   salesByYear = data.totalYearSaleByMonth.map((item: any) =>
+  //     item.total.toFixed(2)
+  //   );
+  // }
   return (
     <>
       <div className="mb-6 grid w-full grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
-        <div className="w-full ">
+        {/* <div className="w-full ">
           <StickerCard
             titleTransKey="sticker-card-title-rev"
             subtitleTransKey="sticker-card-subtitle-rev"
@@ -100,11 +100,11 @@ export default function Dashboard() {
             iconBgStyle={{ backgroundColor: '#93C5FD' }}
             price={data?.totalShops}
           />
-        </div>
+        </div> */}
       </div>
 
       <div className="mb-6 flex w-full flex-wrap md:flex-nowrap">
-        <ColumnChart
+        {/* <ColumnChart
           widgetTitle={t('common:sale-history')}
           colors={['#03D3B5']}
           series={salesByYear}
@@ -122,10 +122,10 @@ export default function Dashboard() {
             t('common:november'),
             t('common:december'),
           ]}
-        />
+        /> */}
       </div>
 
-      <div className="mb-6 flex w-full flex-wrap space-y-6 rtl:space-x-reverse xl:flex-nowrap xl:space-y-0 xl:space-x-5">
+      {/* <div className="mb-6 flex w-full flex-wrap space-y-6 rtl:space-x-reverse xl:flex-nowrap xl:space-y-0 xl:space-x-5">
         <div className="w-full xl:w-1/2">
           <RecentOrders
             orders={orderData}
@@ -145,7 +145,7 @@ export default function Dashboard() {
           products={popularProductData}
           title={t('table:popular-products-table-title')}
         />
-      </div>
+      </div> */}
     </>
   );
 }

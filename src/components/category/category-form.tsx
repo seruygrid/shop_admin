@@ -173,7 +173,7 @@ type FormValues = {
   parent: any;
   image: any;
   icon: any;
-  type: any;
+  // type: any;
 };
 
 const defaultValues = {
@@ -183,7 +183,7 @@ const defaultValues = {
   details: '',
   parent: '',
   icon: '',
-  type: '',
+  // type: '',
 };
 
 type IProps = {
@@ -271,7 +271,7 @@ export default function CreateOrUpdateCategoriesForm({
       },
       icon: values.icon?.value || '',
       parent: values.parent?.id ?? null,
-      type_id: values.type?.id,
+      // type_id: values.type?.id,
     };
     if (
       !initialValues ||
@@ -376,7 +376,7 @@ export default function CreateOrUpdateCategoriesForm({
               isClearable={true}
             />
           </div>
-          <SelectTypes control={control} errors={errors} />
+          {/* <SelectTypes control={control} errors={errors} /> */}
           <SelectCategories control={control} setValue={setValue} />
         </Card>
       </div>

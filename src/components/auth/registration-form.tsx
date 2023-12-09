@@ -17,15 +17,18 @@ import {
 } from '@/utils/auth-utils';
 import { Permission } from '@/types';
 import { useRegisterMutation } from '@/data/user';
+import { signUp } from 'aws-amplify/auth';
 
 type FormValues = {
   name: string;
   email: string;
   password: string;
   permission: Permission;
+  phone_number: string;
 };
 const registrationFormSchema = yup.object().shape({
   name: yup.string().required('form:error-name-required'),
+  phone_number: yup.string().required('form:error-contact-required'),
   email: yup
     .string()
     .email('form:error-email-format')
@@ -51,39 +54,67 @@ const RegistrationForm = () => {
   const router = useRouter();
   const { t } = useTranslation();
 
-  async function onSubmit({ name, email, password, permission }: FormValues) {
-    registerUser(
-      {
-        name,
-        email,
+  async function onSubmit({
+    name,
+    password,
+    email,
+    phone_number,
+    permission,
+  }: FormValues) {
+    try {
+      const { isSignUpComplete, userId, nextStep } = await signUp({
+        username: email,
         password,
-        permission,
-      },
-
-      {
-        onSuccess: (data) => {
-          if (data?.token) {
-            if (hasAccess(allowedRoles, data?.permissions)) {
-              setAuthCredentials(data?.token, data?.permissions);
-              router.push(Routes.dashboard);
-              return;
-            }
-            setErrorMessage('form:error-enough-permission');
-          } else {
-            setErrorMessage('form:error-credential-wrong');
-          }
-        },
-        onError: (error: any) => {
-          Object.keys(error?.response?.data).forEach((field: any) => {
-            setError(field, {
-              type: 'manual',
-              message: error?.response?.data[field],
-            });
-          });
-        },
-      }
-    );
+        options: {
+          userAttributes: {
+            name,
+            email,
+            phone_number 
+          },
+          autoSignIn: true
+        }
+      });
+  
+      console.log(userId);
+    } catch (error) {
+      setErrorMessage('form:error-credential-wrong');
+      setErrorMessage(error)
+    }
   }
+
+  // async function onSubmit({ name, email, password, permission }: FormValues) {
+  //   registerUser(
+  //     {
+  //       name,
+  //       email,
+  //       password,
+  //       permission,
+  //     },
+
+  //     {
+  //       onSuccess: (data) => {
+  //         if (data?.token) {
+  //           if (hasAccess(allowedRoles, data?.permissions)) {
+  //             setAuthCredentials(data?.token, data?.permissions);
+  //             router.push(Routes.dashboard);
+  //             return;
+  //           }
+  //           setErrorMessage('form:error-enough-permission');
+  //         } else {
+  //           setErrorMessage('form:error-credential-wrong');
+  //         }
+  //       },
+  //       onError: (error: any) => {
+  //         Object.keys(error?.response?.data).forEach((field: any) => {
+  //           setError(field, {
+  //             type: 'manual',
+  //             message: error?.response?.data[field],
+  //           });
+  //         });
+  //       },
+  //     }
+  //   );
+  // }
 
   return (
     <>
@@ -109,6 +140,13 @@ const RegistrationForm = () => {
           error={t(errors?.password?.message!)}
           variant="outline"
           className="mb-4"
+        />
+        <Input
+          label={t('form:input-label-contact')}
+          {...register('phone_number')}
+          variant="outline"
+          className="mb-4"
+          error={t(errors?.phone_number?.message!)}
         />
         <Button className="w-full" loading={loading} disabled={loading}>
           {t('form:text-register')}

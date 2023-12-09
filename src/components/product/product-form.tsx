@@ -1,6 +1,6 @@
 import Input from '@/components/ui/input';
 import TextArea from '@/components/ui/text-area';
-import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 import Button from '@/components/ui/button';
 import Description from '@/components/ui/description';
 import Card from '@/components/common/card';
@@ -10,20 +10,14 @@ import { useRouter } from 'next/router';
 import { yupResolver } from '@hookform/resolvers/yup';
 import FileInput from '@/components/ui/file-input';
 import { productValidationSchema } from './product-validation-schema';
-import ProductVariableForm from './product-variable-form';
 import ProductSimpleForm from './product-simple-form';
-import ProductGroupInput from './product-group-input';
 import ProductCategoryInput from './product-category-input';
-import ProductTypeInput from './product-type-input';
-import { ProductType, Product, ProductStatus } from '@/types';
+import { Product, ProductStatus } from '@/types';
 import { useTranslation } from 'next-i18next';
 import { useShopQuery } from '@/data/shop';
-import ProductTagInput from './product-tag-input';
 import { Config } from '@/config';
 import Alert from '@/components/ui/alert';
-import { useMemo, useState } from 'react';
-import ProductAuthorInput from './product-author-input';
-import ProductManufacturerInput from './product-manufacturer-input';
+import { useState } from 'react';
 import { EditIcon } from '@/components/icons/edit';
 import {
   getProductDefaultValues,
@@ -35,60 +29,10 @@ import {
   useCreateProductMutation,
   useUpdateProductMutation,
 } from '@/data/product';
-import { split, join, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import { adminOnly, getAuthCredentials, hasAccess } from '@/utils/auth-utils';
 import { useSettingsQuery } from '@/data/settings';
-import Tooltip from '@/components/ui/tooltip';
-import { useModalAction } from '@/components/ui/modal/modal.context';
-import { useCallback } from 'react';
-import OpenAIButton from '@/components/openAI/openAI.button';
-import { ItemProps } from '@/types';
 import { formatSlug } from '@/utils/use-slug';
-
-export const chatbotAutoSuggestion = ({ name }: { name: string }) => {
-  return [
-    {
-      id: 1,
-      title: `Write a product description about ${name} in 100 words or less that highlights the key benefits of the product.`,
-    },
-    {
-      id: 2,
-      title: `Create a product description about ${name} using HTML tags and include a product ID.`,
-    },
-    {
-      id: 3,
-      title: `Write a product description about ${name} using sensory language to appeal to the reader's senses.`,
-    },
-    {
-      id: 4,
-      title: `Create a product description about ${name} that includes customer reviews and ratings.`,
-    },
-    {
-      id: 5,
-      title: `Write a product description about ${name} using storytelling techniques to create an emotional connection with the reader.`,
-    },
-    {
-      id: 6,
-      title: `Write a product description about ${name} that compares and contrasts the product with similar products on the market.`,
-    },
-    {
-      id: 7,
-      title: `Create a product description about ${name} that highlights the product's sustainability and eco-friendliness.`,
-    },
-    {
-      id: 8,
-      title: `Write a product description about ${name} that includes a list of frequently asked questions and their answers.`,
-    },
-    {
-      id: 9,
-      title: `Create a product description about ${name} that includes a video demonstration of the product in use.`,
-    },
-    {
-      id: 10,
-      title: `Write a product description about ${name} that includes a call-to-action and encourages the reader to make a purchase.`,
-    },
-  ];
-};
 
 type ProductFormProps = {
   initialValues?: Product | null;
@@ -108,7 +52,6 @@ export default function CreateOrUpdateProductForm({
   const [isSlugDisable, setIsSlugDisable] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { t } = useTranslation();
-  const { openModal } = useModalAction();
   const { permissions } = getAuthCredentials();
   let permission = hasAccess(adminOnly, permissions);
   let statusList = [
@@ -193,28 +136,6 @@ export default function CreateOrUpdateProductForm({
       });
     }
   };
-  const product_type = watch('product_type');
-  const is_digital = watch('is_digital');
-  const is_external = watch('is_external');
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'video',
-  });
-  const productName = watch('name');
-
-  const autoSuggestionList = useMemo(() => {
-    return chatbotAutoSuggestion({ name: productName ?? '' });
-  }, [productName]);
-
-  const handleGenerateDescription = useCallback(() => {
-    openModal('GENERATE_DESCRIPTION', {
-      control,
-      name: productName,
-      set_value: setValue,
-      key: 'description',
-      suggestion: autoSuggestionList as ItemProps[],
-    });
-  }, [productName]);
 
   const slugAutoSuggest = formatSlug(watch('name'));
   if (Boolean(options?.isProductReview)) {
@@ -348,75 +269,13 @@ export default function CreateOrUpdateProductForm({
 
           <div className="my-5 flex flex-wrap border-b border-dashed border-border-base pb-8 sm:my-8">
             <Description
-              title={t('form:video-title')}
-              details={t('form:video-help-text')}
-              className="w-full px-0 pb-5 sm:w-4/12 sm:py-8 sm:pe-4 md:w-1/3 md:pe-5"
-            />
-
-            <Card className="w-full sm:w-8/12 md:w-2/3">
-              {/* Video url picker */}
-              <div>
-                {fields.map((item: any, index: number) => (
-                  <div
-                    className="border-b border-dashed border-border-200 py-5 first:pt-0 last:border-b-0 md:py-8 md:first:pt-0"
-                    key={index}
-                  >
-                    {' '}
-                    <div className="mb-3 flex gap-1 text-sm font-semibold leading-none text-body-dark">
-                      {`${t('form:input-label-video-embed')} ${index + 1}`}
-                      <Tooltip content={t('common:text-video-tooltip')} />
-                    </div>
-                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-5">
-                      <TextArea
-                        className="sm:col-span-4"
-                        variant="outline"
-                        {...register(`video.${index}.url` as const)}
-                        defaultValue={item?.url!}
-                        // @ts-ignore
-                        error={t(errors?.video?.[index]?.url?.message)}
-                      />
-                      <button
-                        onClick={() => {
-                          remove(index);
-                        }}
-                        type="button"
-                        className="text-sm text-red-500 transition-colors duration-200 hover:text-red-700 focus:outline-none sm:col-span-1"
-                      >
-                        {t('form:button-label-remove')}
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <Button
-                type="button"
-                onClick={() => {
-                  append({ url: '' });
-                }}
-                className="w-full sm:w-auto"
-              >
-                {t('form:button-label-add-video')}
-              </Button>
-            </Card>
-          </div>
-
-          <div className="my-5 flex flex-wrap border-b border-dashed border-border-base pb-8 sm:my-8">
-            <Description
               title={t('form:type-and-category')}
               details={t('form:type-and-category-help-text')}
               className="w-full px-0 pb-5 sm:w-4/12 sm:py-8 sm:pe-4 md:w-1/3 md:pe-5"
             />
 
             <Card className="w-full sm:w-8/12 md:w-2/3">
-              <ProductGroupInput
-                control={control}
-                error={t((errors?.type as any)?.message)}
-              />
               <ProductCategoryInput control={control} setValue={setValue} />
-              <ProductAuthorInput control={control} />
-              <ProductManufacturerInput control={control} setValue={setValue} />
-              <ProductTagInput control={control} setValue={setValue} />
             </Card>
           </div>
 
@@ -476,12 +335,6 @@ export default function CreateOrUpdateProductForm({
                 className="mb-5"
               />
               <div className="relative">
-                {options?.useAi && (
-                  <OpenAIButton
-                    title="Generate Description With AI"
-                    onClick={handleGenerateDescription}
-                  />
-                )}
                 <TextArea
                   label={t('form:input-label-description')}
                   {...register('description')}
@@ -520,29 +373,8 @@ export default function CreateOrUpdateProductForm({
             </Card>
           </div>
 
-          <div className="my-5 flex flex-wrap border-b border-dashed border-border-base pb-8 sm:my-8">
-            <Description
-              title={t('form:form-title-product-type')}
-              details={t('form:form-description-product-type')}
-              className="w-full px-0 pb-5 sm:w-4/12 sm:py-8 sm:pr-4 md:w-1/3 md:pr-5"
-            />
-
-            <ProductTypeInput />
-          </div>
-
           {/* Simple Type */}
-          {product_type?.value === ProductType.Simple && (
-            <ProductSimpleForm initialValues={initialValues} />
-          )}
-
-          {/* Variation Type */}
-          {product_type?.value === ProductType.Variable && (
-            <ProductVariableForm
-              shopId={shopId}
-              initialValues={initialValues}
-              settings={options}
-            />
-          )}
+          <ProductSimpleForm initialValues={initialValues} />
 
           <div className="mb-4 text-end">
             {initialValues && (

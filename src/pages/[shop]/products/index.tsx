@@ -113,7 +113,7 @@ export default function ProductsPage() {
                 placeholderText={t('form:input-placeholder-search-name')}
               />
 
-              {locale === Config.defaultLanguage && (
+              {locale === Config.defaultLanguage && hasAccess(adminOnly, permissions) && (
                 <LinkButton
                   href={`/${shop}/products/create`}
                   className="h-12 ms-4 md:ms-6"

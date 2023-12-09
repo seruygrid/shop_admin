@@ -7,7 +7,7 @@ const SUPPORTED_IMAGE_FORMATS = ['image/jpg', 'image/jpeg', 'image/png'];
 
 export const productValidationSchema = yup.object().shape({
   name: yup.string().required('form:error-name-required'),
-  product_type: yup.object().required('form:error-product-type-required'),
+  // product_type: yup.object().required('form:error-product-type-required'),
   sku: yup.mixed().when('product_type', {
     is: (productType: {
       name: string;
@@ -47,7 +47,7 @@ export const productValidationSchema = yup.object().shape({
       .required('form:error-quantity-required'),
   }),
   unit: yup.string().required('form:error-unit-required'),
-  type: yup.object().nullable().required('form:error-type-required'),
+  // type: yup.object().nullable().required('form:error-type-required'),
   status: yup.string().nullable().required('form:error-status-required'),
   variation_options: yup.array().of(
     yup.object().shape({
@@ -82,23 +82,23 @@ export const productValidationSchema = yup.object().shape({
       }),
     })
   ),
-  digital_file_input: yup.mixed().when('is_digital', (isDigital) => {
-    if (isDigital) {
-      return yup
-        .object()
-        .test(
-          'check-digital-file',
-          'form:error-digital-file-input-required',
-          (file) => file && file?.original
-        );
-    }
-    return yup.string().nullable();
-  }),
-  video: yup.array().of(
-    yup.object().shape({
-      url: yup.string().required('Video URL is required'),
-    })
-  ),
+  // digital_file_input: yup.mixed().when('is_digital', (isDigital) => {
+  //   if (isDigital) {
+  //     return yup
+  //       .object()
+  //       .test(
+  //         'check-digital-file',
+  //         'form:error-digital-file-input-required',
+  //         (file) => file && file?.original
+  //       );
+  //   }
+  //   return yup.string().nullable();
+  // }),
+  // video: yup.array().of(
+  //   yup.object().shape({
+  //     url: yup.string().required('Video URL is required'),
+  //   })
+  // ),
   // image: yup
   //   .mixed()
   //   .nullable()

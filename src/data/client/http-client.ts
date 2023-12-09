@@ -1,3 +1,4 @@
+import { AUTH_CRED } from '@/utils/constants';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import Router from 'next/router';
@@ -14,10 +15,8 @@ const Axios = axios.create({
     'Content-Type': 'application/json',
   },
 });
-// Change request data/error
-const AUTH_TOKEN_KEY = process.env.NEXT_PUBLIC_AUTH_TOKEN_KEY ?? 'authToken';
 Axios.interceptors.request.use((config) => {
-  const cookies = Cookies.get(AUTH_TOKEN_KEY);
+  const cookies = Cookies.get(AUTH_CRED);
   let token = '';
   if (cookies) {
     token = JSON.parse(cookies)['token'];
@@ -37,10 +36,12 @@ Axios.interceptors.response.use(
     if (
       (error.response && error.response.status === 401) ||
       (error.response && error.response.status === 403) ||
+      (error.response && error.response.status === 500) ||
       (error.response &&
         error.response.data.message === 'PICKBAZAR_ERROR.NOT_AUTHORIZED')
     ) {
-      Cookies.remove(AUTH_TOKEN_KEY);
+      Cookies.remove(AUTH_CRED);
+      localStorage.clear();
       Router.reload();
     }
     return Promise.reject(error);

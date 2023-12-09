@@ -11,7 +11,6 @@ import {
   BlockUserInput,
   WalletPointsInput,
   UpdateUser,
-  QueryOptionsType,
   UserPaginator,
   UserQueryOptions,
 } from '@/types';
@@ -21,9 +20,6 @@ import { HttpClient } from './http-client';
 export const userClient = {
   me: () => {
     return HttpClient.get<User>(API_ENDPOINTS.ME);
-  },
-  login: (variables: LoginInput) => {
-    return HttpClient.post<AuthResponse>(API_ENDPOINTS.TOKEN, variables);
   },
   logout: () => {
     return HttpClient.post<any>(API_ENDPOINTS.LOGOUT, {});

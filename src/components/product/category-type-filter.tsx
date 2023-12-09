@@ -1,7 +1,6 @@
 import Label from '@/components/ui/label';
 import Select from '@/components/ui/select/select';
 import { useCategoriesQuery } from '@/data/category';
-import { useTypesQuery } from '@/data/type';
 import cn from 'classnames';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
@@ -23,7 +22,7 @@ export default function CategoryTypeFilter({
   const { locale } = useRouter();
   const { t } = useTranslation();
 
-  const { types, loading } = useTypesQuery({ language: locale });
+  // const { types, loading } = useTypesQuery({ language: locale });
   const { categories, loading: categoryLoading } = useCategoriesQuery({
     limit: 999,
     language: locale,
@@ -37,7 +36,7 @@ export default function CategoryTypeFilter({
         className
       )}
     >
-      <div className="w-full">
+      {/* <div className="w-full">
         <Label>{t('common:filter-by-group')}</Label>
         <Select
           options={types}
@@ -48,7 +47,7 @@ export default function CategoryTypeFilter({
           onChange={onTypeFilter}
           isClearable={true}
         />
-      </div>
+      </div> */}
       <div className="w-full">
         <Label>{t('common:filter-by-category')}</Label>
         <Select

@@ -55,7 +55,18 @@ export function hasAccess(
 ) {
   if (_userPermissions) {
     return Boolean(
-      _allowedRoles?.find((aRole) => _userPermissions.includes(aRole))
+      _allowedRoles?.find((aRole) => _userPermissions.includes(aRole.toUpperCase()))
+    );
+  }
+  return false;
+}
+export function hasCognitoAccess(
+  _allowedRoles: string[],
+  _userPermissions: string[] | string | undefined | null
+) {
+  if (_userPermissions) {
+    return Boolean(
+      _allowedRoles?.find((aRole) => _userPermissions.includes(aRole.toUpperCase()))
     );
   }
   return false;

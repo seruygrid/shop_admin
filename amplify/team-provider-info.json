@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-harvestadmin-dev-100621-authRole",
+      "UnauthRoleArn": "arn:aws:iam::885497135302:role/amplify-harvestadmin-dev-100621-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::885497135302:role/amplify-harvestadmin-dev-100621-authRole",
+      "Region": "eu-west-1",
+      "DeploymentBucketName": "amplify-harvestadmin-dev-100621-deployment",
+      "UnauthRoleName": "amplify-harvestadmin-dev-100621-unauthRole",
+      "StackName": "amplify-harvestadmin-dev-100621",
+      "StackId": "arn:aws:cloudformation:eu-west-1:885497135302:stack/amplify-harvestadmin-dev-100621/85d0e1b0-8b69-11ee-81f3-0696b110c387",
+      "AmplifyAppId": "dmzzlknop5b8n"
+    },
+    "categories": {
+      "auth": {
+        "harvestadmin6e134674": {}
+      }
+    }
+  }
+}

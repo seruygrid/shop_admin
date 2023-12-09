@@ -219,107 +219,107 @@ export function getProductInputValues(
   initialValues: any
 ) {
   const {
-    product_type,
-    type,
+    // product_type,
+    // type,
     quantity,
-    author,
-    manufacturer,
+    // author,
+    // manufacturer,
     image,
     is_digital,
     categories,
-    tags,
-    digital_file_input,
+    // tags,
+    // digital_file_input,
     variation_options,
     variations,
     ...simpleValues
   } = values;
   // const { locale } = useRouter();
   // const router = useRouter();
-  const processedFile = processFileWithName(digital_file_input);
+  // const processedFile = processFileWithName(digital_file_input);
 
   return {
     ...simpleValues,
     is_digital,
     // language: router.locale,
-    author_id: author?.id,
-    manufacturer_id: manufacturer?.id,
-    type_id: type?.id,
-    product_type: product_type?.value,
+    // author_id: author?.id,
+    // manufacturer_id: manufacturer?.id,
+    // type_id: type?.id,
+    // product_type: product_type?.value,
     categories: categories.map((category) => category?.id),
-    tags: tags.map((tag) => tag?.id),
+    // tags: tags.map((tag) => tag?.id),
     image: omitTypename<any>(image),
     gallery: values.gallery?.map((gi: any) => omitTypename(gi)),
 
-    ...(product_type?.value === ProductType?.Simple && {
-      quantity,
-      ...(is_digital && {
-        digital_file: {
-          id: initialValues?.digital_file?.id,
-          attachment_id: digital_file_input.id,
-          url: digital_file_input.original,
-          file_name:
-            processedFile[0].filename + '.' + processedFile[0].fileType,
-        },
-      }),
-    }),
+    // ...(product_type?.value === ProductType?.Simple && {
+    //   quantity,
+    //   ...(is_digital && {
+    //     digital_file: {
+    //       id: initialValues?.digital_file?.id,
+    //       attachment_id: digital_file_input.id,
+    //       url: digital_file_input.original,
+    //       file_name:
+    //         processedFile[0].filename + '.' + processedFile[0].fileType,
+    //     },
+    //   }),
+    // }),
     variations: [],
-    variation_options: {
-      upsert: [],
-      delete: initialValues?.variation_options?.map(
-        (variation: Variation) => variation?.id
-      ),
-    },
-    ...(product_type?.value === ProductType?.Variable && {
-      quantity: calculateQuantity(variation_options),
-      variations: variations?.flatMap(({ value }: any) =>
-        value?.map(({ id }: any) => ({ attribute_value_id: id }))
-      ),
-      variation_options: {
-        // @ts-ignore
-        upsert: variation_options?.map(
-          ({
-            options,
-            id,
-            digital_file,
-            image: variationImage,
-            digital_file_input: digital_file_input_,
-            ...rest
-          }: any) => ({
-            ...(id !== '' ? { id } : {}),
-            ...omit(rest, '__typename'),
-            ...(!isEmpty(variationImage) && {
-              image: omitTypename(variationImage),
-            }),
-            ...(rest?.is_digital && {
-              digital_file: {
-                id: digital_file?.id,
-                attachment_id: digital_file_input_?.id,
-                url: digital_file_input_?.original,
-                file_name: digital_file?.file_name,
-              },
-            }),
-            options: processOptions(options).map(
-              ({ name, value }: VariationOption) => ({
-                name,
-                value,
-              })
-            ),
-          })
-        ),
-        delete: initialValues?.variation_options
-          ?.map((initialVariationOption: Variation) => {
-            // @ts-ignore
-            const find = variation_options?.find(
-              (variationOption: Variation) =>
-                variationOption?.id === initialVariationOption?.id
-            );
-            if (!find) {
-              return initialVariationOption?.id;
-            }
-          })
-          .filter((item?: number) => item !== undefined),
-      },
-    }),
+    // variation_options: {
+    //   upsert: [],
+    //   delete: initialValues?.variation_options?.map(
+    //     (variation: Variation) => variation?.id
+    //   ),
+    // },
+    // ...(product_type?.value === ProductType?.Variable && {
+    //   quantity: calculateQuantity(variation_options),
+    //   variations: variations?.flatMap(({ value }: any) =>
+    //     value?.map(({ id }: any) => ({ attribute_value_id: id }))
+    //   ),
+    //   variation_options: {
+    //     // @ts-ignore
+    //     upsert: variation_options?.map(
+    //       ({
+    //         options,
+    //         id,
+    //         digital_file,
+    //         image: variationImage,
+    //         digital_file_input: digital_file_input_,
+    //         ...rest
+    //       }: any) => ({
+    //         ...(id !== '' ? { id } : {}),
+    //         ...omit(rest, '__typename'),
+    //         ...(!isEmpty(variationImage) && {
+    //           image: omitTypename(variationImage),
+    //         }),
+    //         ...(rest?.is_digital && {
+    //           digital_file: {
+    //             id: digital_file?.id,
+    //             attachment_id: digital_file_input_?.id,
+    //             url: digital_file_input_?.original,
+    //             file_name: digital_file?.file_name,
+    //           },
+    //         }),
+    //         options: processOptions(options).map(
+    //           ({ name, value }: VariationOption) => ({
+    //             name,
+    //             value,
+    //           })
+    //         ),
+    //       })
+    //     ),
+    //     delete: initialValues?.variation_options
+    //       ?.map((initialVariationOption: Variation) => {
+    //         // @ts-ignore
+    //         const find = variation_options?.find(
+    //           (variationOption: Variation) =>
+    //             variationOption?.id === initialVariationOption?.id
+    //         );
+    //         if (!find) {
+    //           return initialVariationOption?.id;
+    //         }
+    //       })
+    //       .filter((item?: number) => item !== undefined),
+    //   },
+    // }),
     ...calculateMinMaxPrice(variation_options),
   };
 }

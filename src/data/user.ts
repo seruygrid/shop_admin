@@ -7,10 +7,11 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { toast } from 'react-toastify';
 import { API_ENDPOINTS } from './client/api-endpoints';
 import { userClient } from './client/user';
-import { User, QueryOptionsType, UserPaginator } from '@/types';
+import { User, QueryOptionsType, UserPaginator, AuthResponse, LoginInput } from '@/types';
 import { mapPaginatorData } from '@/utils/data-mappers';
 import axios from "axios";
 import { setEmailVerified } from "@/utils/auth-utils";
+import { signIn, fetchAuthSession } from 'aws-amplify/auth';
 
 
 export const useMeQuery = () => {
@@ -42,7 +43,15 @@ export const useMeQuery = () => {
 };
 
 export function useLogin() {
-  return useMutation(userClient.login);
+  async function loginCognitoUser({email, password}: LoginInput) {
+    const { isSignedIn } = await signIn({ username: email, password });
+    if (isSignedIn) {
+      const userAttributes = await fetchAuthSession();
+      const permissions = userAttributes.tokens?.accessToken?.payload['cognito:groups'] ?? []
+      return {token: userAttributes.tokens?.accessToken.toString(), permissions}
+    }
+  }
+  return useMutation(loginCognitoUser);
 }
 
 export const useLogoutMutation = () => {

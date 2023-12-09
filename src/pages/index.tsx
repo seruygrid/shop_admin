@@ -4,7 +4,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import {
   allowedRoles,
   getAuthCredentials,
-  hasAccess,
+  hasCognitoAccess,
   isAuthenticated,
 } from '@/utils/auth-utils';
 import { SUPER_ADMIN } from '@/utils/constants';
@@ -38,7 +38,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { token, permissions } = getAuthCredentials(ctx);
   if (
     !isAuthenticated({ token, permissions }) ||
-    !hasAccess(allowedRoles, permissions)
+    !hasCognitoAccess(allowedRoles, permissions)
   ) {
     return {
       redirect: {

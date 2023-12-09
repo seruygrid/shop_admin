@@ -22,6 +22,8 @@ module.exports = withPWA({
       'pickbazar-sail.test',
       'pickbazarlaravel.s3.ap-southeast-1.amazonaws.com',
       'lh3.googleusercontent.com',
+      'pixarlaravel.s3.ap-southeast-1.amazonaws.com',
+      'harvest-images.s3.eu-west-1.amazonaws.com',
     ],
   },
   ...(process.env.APPLICATION_MODE === 'production' && {
